@@ -20,11 +20,11 @@ def get_simulation_directories(lake_path, data_file='fort.9'):
     the datafile is found.
     """
     cwd = os.getcwd()
-    all_dirs = os.listdir(cwd + lake_path)
+    all_dirs = os.listdir(lake_path)
     all_dirs = [d for d in all_dirs if d[0] != '.'] #remove hidden files or directories
     simulation_dirs = []
     for d in all_dirs:
-        simulation_files = os.listdir(cwd + lake_path + '/' + d)
+        simulation_files = os.listdir(lake_path + '/' + d)
         if data_file in simulation_files:
             #print('fort.9 in {0}'.format(d))
             simulation_dirs.append(d)

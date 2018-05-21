@@ -34,7 +34,7 @@ if __name__ == '__main__':
     import lotuslake
 
     cwd = os.getcwd()
-    lake_path = '/gStarStudy_64ppd_re100'
+    lake_path = cwd + '/gStarStudy_64ppd_re100'
 
     def postproc_lotus_simulation(simulation_dir):
         """
@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
     for i, s in enumerate(lake_simulations[:]):
         print(s)
-        s_dir = '{0}{1}/{2}'.format(cwd, lake_path, s)
+        s_dir = '{0}/{1}'.format(lake_path, s)
         s_metadata = parse_simulation_name(s)
         lift_stats, drag_stats = postproc_lotus_simulation(s_dir)
 
