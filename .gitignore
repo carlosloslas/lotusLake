@@ -1,0 +1,12 @@
+# Gitignore file for lotuslake
+# ============================
+
+# Test  metadata generated from source files by pytest
+.pytest_cache
+.eggs
+/*.egg-info
+
+# Installing metadata
+/build/
+/dist/
+/lotuslake/__pycache__/

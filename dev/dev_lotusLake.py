@@ -101,7 +101,9 @@ if __name__ == '__main__':
         data_file = 'fort.9'
         data_dir = '{0}/{1}'.format(simulation_dir, data_file)
         data_df = lotusstat.convert_data_path_to_dataFrame_3d(data_dir)
-        data_df = data_df.iloc[0:,:]
+        data_df = data_df.iloc[100:,:]
+
+        case_name = simulation_dir.split('/')[-1]
 
         data_df = lotusstat.calculate_total_forces(data_df)
 
@@ -109,8 +111,10 @@ if __name__ == '__main__':
         drag_stats = lotusstat.calculate_signal_stats(data_df, 'totalForceX', signal_range=(0.8, 1))
 
         #no need to plot the specific simulation resultsss
-        #lotusstat.plot_lift_signal(data_df, show_visc=True, plot_stats=True, stats=lift_stats, show_stats=True, figsize=(10,5))
-        #lotusstat.plot_drag_signal(data_df, plot_stats=True, stats=drag_stats, show_stats=True, figsize=(10,5))
+        fig_l, ax_l = lotusstat.plot_lift_signal(data_df, show_visc=True, plot_stats=True, stats=lift_stats, show_stats=True, figsize=(10,5))
+        fig_d, ax_d = lotusstat.plot_drag_signal(data_df, plot_stats=True, stats=drag_stats, show_stats=True, figsize=(10,5))
+
+        lotusstat.save_figures_to_pdf([fig_l, fig_d], '{0}.pdf'.format(case_name))
 
         return lift_stats, drag_stats
 
@@ -145,11 +149,13 @@ if __name__ == '__main__':
             }
 
 
-    lake_df = create_lake_df(lotus_lake_parameters, 'simulation_parameters', 'study_parameters')
+    lake_df = create_lake_df(
+        lotus_lake_parameters, 'simulation_parameters', 'study_parameters'
+        )
 
     lake_list = []
 
-    for i, s in enumerate(lake_simulations):
+    for i, s in enumerate(lake_simulations[:]):
         print(s)
         s_dir = '{0}{1}/{2}'.format(cwd, lake_path, s)
         s_metadata = parse_simulation_name(s)

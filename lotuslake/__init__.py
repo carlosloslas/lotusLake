@@ -8,6 +8,8 @@ C.Losada de la Lastra
 """
 
 from .__version__ import version
+from .io import *
+from .vis import *
 
 def hello():
     # test function to confirm import has succeded
