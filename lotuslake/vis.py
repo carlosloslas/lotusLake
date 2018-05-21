@@ -8,6 +8,8 @@ Vis
 
 """
 
+import matplotlib.pyplot as plt
+
 def plot_lake_df(lake_df, x, y, group_param=None, subplots=False, fig_size=(8,6)):
     if group_param == None:
         assert subplots == False

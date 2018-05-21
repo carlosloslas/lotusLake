@@ -11,69 +11,8 @@ import lotusstat
 import numpy as np
 import pandas as pd
 import os
-
 import matplotlib.pyplot as plt
 
-def create_lake_df(lake_dict, parameters_key, variables_key):
-    """
-        LotusLakes can be used to study variations in parameters in order to
-    understand their effect in some variables of interest.
-        Turns a lake_metadata dict into an empty dataframe based on the sub-keys
-    under the supplied paramaters and variables keys.
-    """
-    col_names = {**lake_dict[parameters_key], **lake_dict[variables_key]}
-    sim_no = lake_dict['simulation_number']
-    df = pd.DataFrame(np.ones([sim_no, len(col_names)]), columns=col_names)
-    return df
-
-def get_simulation_directories(lake_path, data_file='fort.9'):
-    """
-        Loop through all available directories and return those where
-    the datafile is found.
-    """
-    cwd = os.getcwd()
-    all_dirs = os.listdir(cwd + lake_path)
-    all_dirs = [d for d in all_dirs if d[0] != '.'] #remove hidden files or directories
-    simulation_dirs = []
-    for d in all_dirs:
-        simulation_files = os.listdir(cwd + lake_path + '/' + d)
-        if data_file in simulation_files:
-            #print('fort.9 in {0}'.format(d))
-            simulation_dirs.append(d)
-            pass
-        else:
-            pass
-    return simulation_dirs
-
-def plot_lake_df(lake_df, x, y, group_param=None, subplots=False, fig_size=(8,6)):
-    if group_param == None:
-        assert subplots == False
-        fig = plt.figure(figsize=fig_size)
-        ax = plt.gca()
-        lake_df.plot(x, y, ax=ax)
-        ax.set(xlabel=x,
-               ylabel=y
-               )
-    else:
-        grouped_lake = lake_df.groupby(by=group_param)
-
-        if subplots:
-            fig, axs = plt.subplots(ncols=1, nrows=len(grouped_lake), figsize=fig_size)
-            for ax, (g, df) in zip(axs, grouped_lake):
-                df.plot(x, y, ax=ax)
-                ax.set(xlabel=x,
-                       ylabel=y,
-                       title='{0} {1}'.format(group_param, g)
-                       )
-        else:
-            fig, ax = plt.subplots(ncols=1, nrows=1, figsize=fig_size)
-            for g, df in grouped_lake:
-                df.plot(x, y, ax=ax, label=g)
-            ax.set(xlabel=x,
-                   ylabel=y,
-                   title='{0} vs {1}, per {2}'.format(x, y, group_param)
-                   )
-    return fig, ax
 
 if __name__ == '__main__':
 
@@ -92,6 +31,8 @@ if __name__ == '__main__':
             3. Add results to the DataFrame organsied on the metadata
     4. Plot the results from the study
     """
+    import lotuslake
+
     cwd = os.getcwd()
     lake_path = '/gStarStudy_64ppd_re100'
 
@@ -115,6 +56,8 @@ if __name__ == '__main__':
         fig_d, ax_d = lotusstat.plot_drag_signal(data_df, plot_stats=True, stats=drag_stats, show_stats=True, figsize=(10,5))
 
         lotusstat.save_figures_to_pdf([fig_l, fig_d], '{0}.pdf'.format(case_name))
+        plt.close()
+        plt.close()
 
         return lift_stats, drag_stats
 
@@ -130,7 +73,7 @@ if __name__ == '__main__':
 
         return dict(zip(keys, values))
 
-    lake_simulations = get_simulation_directories(lake_path)
+    lake_simulations = lotuslake.get_simulation_directories(lake_path)
 
     lotus_lake_parameters = {
             'project_name' : 'Circlar cylinder array gap study',
@@ -149,7 +92,7 @@ if __name__ == '__main__':
             }
 
 
-    lake_df = create_lake_df(
+    lake_df = lotuslake.create_lake_df(
         lotus_lake_parameters, 'simulation_parameters', 'study_parameters'
         )
 
@@ -164,5 +107,5 @@ if __name__ == '__main__':
         s_data = [s_metadata['d'], s_metadata['g'], lift_stats['mad'], drag_stats['mean']]
         lake_df.iloc[i] = s_data
 
-    fig, ax = plot_lake_df(lake_df, 'gap', 'lift_mad', group_param='dimensions')
+    fig, ax = lotuslake.plot_lake_df(lake_df, 'gap', 'lift_mad', group_param='dimensions')
     plt.savefig(lotus_lake_parameters['project_name'])

@@ -11,6 +11,8 @@ disorganised collections of lotus simulations.
 """
 
 import os
+import pandas as pd
+import numpy as np
 
 def get_simulation_directories(lake_path, data_file='fort.9'):
     """
